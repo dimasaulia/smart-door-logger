@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART DOOR LOGGER</title>
+    <link rel="stylesheet" href="/style/base.css">
+    <link rel="stylesheet" href="/style/index.css">
+
+</head>
+
+<body>
+    <header>
+        <h2>SMART DOOR LOCK STATISTIC</h2>
+    </header>
+    <canvas id="chart"></canvas>
+
+
+    <div id="table-head">
+        <h3>Device ID</h3>
+        <h3>Device Type</h3>
+        <h3>Response Time (ms)</h3>
+        <h3>Time</h3>
+    </div>
+
+    <div id="container">
+
+    </div>
+    
+    <p id="load">Load More</p>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/util/httpRequest.js"></script>
+<script src="/js/util/timeformater.js"></script>
+<script src="/js/index.js"></script>
+
+</html>
