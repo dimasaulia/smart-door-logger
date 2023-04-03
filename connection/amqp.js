@@ -41,7 +41,7 @@ class RabbitConnection {
                 "logger.save",
                 logSaver
             );
-            console.log("Connection to RabbitMQ established");
+            console.log(" [i]: Connection to RabbitMQ established");
         } catch (error) {
             console.log(error);
         }
@@ -59,7 +59,7 @@ class RabbitConnection {
 
     // consume
     static async consumeMessage(ch, key, cb) {
-        console.log("LISTENING");
+        console.log(` [i]: Listening to "${key}" event`);
         ch.bindQueue(RabbitSettings.queue, RabbitSettings.exchange, key);
         ch.consume(RabbitSettings.queue, async (msg) => {
             if (msg !== null) {

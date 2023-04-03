@@ -8,7 +8,7 @@ const {
 } = require("../../services/auth");
 const { resError, resSuccess } = require("../../services/responseHandler");
 const { sendEmail, urlTokenGenerator } = require("../../services/mailing");
-const { random: stringGenerator } = require("@supercharge/strings");
+
 const crypto = require("crypto");
 const prisma = new PrismaClient();
 const ITEM_LIMIT = Number(process.env.ITEM_LIMIT) || 10;
