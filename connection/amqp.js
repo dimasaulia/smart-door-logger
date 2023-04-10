@@ -8,8 +8,8 @@ const RabbitSettings = {
     password: "guest",
     authMechanism: "AMQPLAIN",
     vhost: "/",
-    queue: "smartdoorlogger",
-    exchange: "logger",
+    exchange: "smartdoor",
+    loggerQueue: "smartdoorlogger",
 };
 
 class RabbitConnection {
@@ -33,24 +33,34 @@ class RabbitConnection {
                 `${RabbitSettings.protocol}://${RabbitSettings.hostname}`
             );
             this.channel = await this.connection.createChannel();
-            this.channel.assertExchange(RabbitSettings.exchange, "topic", {
+            this.channel.assertExchange(RabbitSettings.exchange, "direct", {
                 durable: false,
             });
-            RabbitConnection.consumeMessage(
-                this.channel,
-                "logger.save",
-                logSaver
+            this.channel.assertQueue(
+                RabbitSettings.loggerQueue,
+                RabbitSettings.exchange,
+                ""
             );
+            RabbitConnection.consumeMessage({
+                channel: this.channel,
+                key: "logger.save",
+                callbackFn: logSaver,
+                queue: RabbitSettings.loggerQueue,
+            });
             console.log(" [i]: Connection to RabbitMQ established");
         } catch (error) {
             console.log(error);
         }
     }
-    //send message to rabbitmq queue
-    static async sendMessage(message, key) {
+    // send message to rabbitmq queue
+    static async sendMessage(message, bindingKey) {
         try {
-            let msg = await this.channel.sendToQueue(key, Buffer.from(message));
-            console.log("Message sent to RabbitMQ");
+            let msg = await this.channel.publish(
+                RabbitSettings.exchange,
+                bindingKey,
+                Buffer.from(message)
+            );
+            // console.log(` [x]: "${message}" has been send to "${key}" exhange`);
             return msg;
         } catch (error) {
             console.log(error);
@@ -58,16 +68,16 @@ class RabbitConnection {
     }
 
     // consume
-    static async consumeMessage(ch, key, cb) {
-        console.log(` [i]: Listening to "${key}" event`);
-        ch.bindQueue(RabbitSettings.queue, RabbitSettings.exchange, key);
-        ch.consume(RabbitSettings.queue, async (msg) => {
+    static async consumeMessage({ channel, queue, key, callbackFn }) {
+        console.log(` [i]: Listening to "${key}" key`);
+        channel.bindQueue(queue, RabbitSettings.exchange, key);
+        channel.consume(queue, async (msg) => {
             if (msg !== null) {
-                console.log(" [x]: Recieved", msg.content.toString());
-                ch.ack(msg);
+                console.log(" [d]: Recieved", msg.content.toString());
+                channel.ack(msg);
 
                 // EXECUTE Callback Function To Do Something
-                cb(msg.content.toString());
+                callbackFn(msg.content.toString());
             } else {
                 console.log("Consumer cancelled by server");
             }
