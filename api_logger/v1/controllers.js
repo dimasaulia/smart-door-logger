@@ -89,3 +89,20 @@ exports.list = async (req, res) => {
         return resError({ res, title: "Failed get log", errors: error });
     }
 };
+
+exports.delete = async (req, res) => {
+    try {
+        const { id } = req.body;
+        await prisma.logger.delete({
+            where: { id },
+        });
+        return resSuccess({ res, title: "Success delete data" });
+    } catch (error) {
+        console.log(error);
+        return resError({
+            res,
+            title: "Failed delete log data",
+            errors: error,
+        });
+    }
+};

@@ -34,14 +34,33 @@ header {
     width: 85%;
 }
 
-.table-item p {
+.table-item > p, .table-item > div {
+    display: block !important;
     flex: 1;
     margin-right: 2rem;
     text-align: left;
 }
 
-.table-item p:last-child {
+.table-item > div:last-child {
     margin-right: 0 !important;
+}
+
+.delete-action{
+    align-items: center;
+    display: flex;
+    width: 100%;
+}
+
+.delete-action >p:first-child{
+    color: #07a379;
+}
+
+.delete-action >p:last-child{
+    color: #eb103b;
+}
+.delete-action >p {
+    font-weight: bolder;
+    margin-right: 10px;
 }
 
 #chart {

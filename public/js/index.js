@@ -57,11 +57,21 @@ const DATA_STORAGE = [];
 
 const tableItemtemplate = (data) => {
     return `
-        <div class="table-item" data-id=${data.id}>
+        <div class="table-item" data-id=${data.id} id=${data.id}>
             <p>${data.Device.device_id}</p>
             <p>${data.Device.deviceType.replace("_", " ")}</p>
             <p>${data.responseTime}</p>
             <p>${days(data.createdAt)}</p>
+            <div class="pointer">
+                <p onclick="deleteButtonOnCLick('${data.id}')">Delete</p>
+                <div class="hidden">
+                    <p>Are you sure for delete this data?</p>
+                    <div class="delete-action">
+                        <p onclick="confirmDeleteOnCLick('${data.id}')">Yes</p>
+                        <p onclick="cencelDeleteOnCLick('${data.id}')">No</p>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 };
@@ -91,3 +101,33 @@ moreBtn.addEventListener("click", (e) => {
     console.log(chart.data.datasets);
     dataLoader(`api/v1/logger/?cursor=${lastId}`, renderData);
 });
+
+const deleteButtonOnCLick = (id) => {
+    const container = document.getElementById(id);
+    container.childNodes[9].childNodes[1].classList.add("hidden");
+    container.childNodes[9].childNodes[3].classList.remove("hidden");
+};
+
+const cencelDeleteOnCLick = (id) => {
+    const container = document.getElementById(id);
+    container.childNodes[9].childNodes[1].classList.remove("hidden");
+    container.childNodes[9].childNodes[3].classList.add("hidden");
+};
+
+const confirmDeleteOnCLick = async (id) => {
+    const container = document.getElementById(id);
+    const logId = container.getAttribute("data-id");
+    const resp = await httpRequest({
+        url: "/api/v1/logger/",
+        method: "DELETE",
+        body: {
+            id: logId,
+        },
+    });
+    if (resp.success) {
+        container.remove();
+    }
+    if (!resp.success) {
+        alert("Failed to delete log");
+    }
+};
