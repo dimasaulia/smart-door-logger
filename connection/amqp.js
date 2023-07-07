@@ -34,13 +34,11 @@ class RabbitConnection {
             );
             this.channel = await this.connection.createChannel();
             this.channel.assertExchange(RabbitSettings.exchange, "direct", {
-                durable: false,
+                durable: true,
             });
-            this.channel.assertQueue(
-                RabbitSettings.loggerQueue,
-                RabbitSettings.exchange,
-                ""
-            );
+            this.channel.assertQueue(RabbitSettings.loggerQueue, {
+                durable: true,
+            });
             RabbitConnection.consumeMessage({
                 channel: this.channel,
                 key: "logger.save",

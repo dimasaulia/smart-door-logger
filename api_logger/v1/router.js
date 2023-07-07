@@ -11,4 +11,6 @@ router
     .get(controllers.list)
     .delete(controllers.delete);
 
+router.get("/download", controllers.download);
+
 module.exports = router;

@@ -1,6 +1,8 @@
 const prisma = require("../../prisma/client");
 const { resError, resSuccess } = require("../../services/responseHandler");
 const ITEM_LIMIT = 20;
+const fs = require("fs");
+
 exports.createLog = async (req, res) => {
     try {
         const { duid, deviceType, responsesTime } = req.body;
@@ -98,10 +100,28 @@ exports.delete = async (req, res) => {
         });
         return resSuccess({ res, title: "Success delete data" });
     } catch (error) {
-        console.log(error);
         return resError({
             res,
             title: "Failed delete log data",
+            errors: error,
+        });
+    }
+};
+
+exports.download = async (req, res) => {
+    try {
+        const data = await prisma.logger.findMany();
+
+        // Set headers for file download
+        res.setHeader("Content-Disposition", "attachment; filename=data.json");
+        res.setHeader("Content-Type", "application/json");
+
+        // Send the JSON data as a file attachment
+        res.send(JSON.stringify(data));
+    } catch (error) {
+        return resError({
+            res,
+            title: "Failed to download log data",
             errors: error,
         });
     }

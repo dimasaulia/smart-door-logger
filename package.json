@@ -31,6 +31,7 @@
     "scripts": {
         "dev": "nodemon logger.js",
         "start": "node logger.js",
+        "db:create": "node prisma/create.js",
         "db:init": "yarn prisma init",
         "db:migrate": "yarn prisma migrate dev",
         "db:deploy": "yarn prisma migrate deploy",
