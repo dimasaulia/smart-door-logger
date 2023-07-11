@@ -110,7 +110,11 @@ exports.delete = async (req, res) => {
 
 exports.download = async (req, res) => {
     try {
-        const data = await prisma.logger.findMany();
+        const data = await prisma.logger.findMany({
+            include: {
+                Device: true,
+            },
+        });
 
         // Set headers for file download
         res.setHeader("Content-Disposition", "attachment; filename=data.json");
